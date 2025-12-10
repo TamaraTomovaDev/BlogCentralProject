@@ -1,0 +1,29 @@
+@startuml
+actor User
+
+User -> Application: HTTP POST /blogposts\nAuthorization: Bearer <token>
+
+' ===== JWT Filter Phase =====
+Application -> JwtAuthFilter: intercept request
+JwtAuthFilter -> JwtUtil: extractUsername(token)
+JwtUtil --> JwtAuthFilter: username
+JwtAuthFilter -> CustomUserDetailsService: loadUserByUsername()
+CustomUserDetailsService -> UserRepository: findByUsername()
+UserRepository --> CustomUserDetailsService: User entity
+CustomUserDetailsService --> JwtAuthFilter: UserDetails
+JwtAuthFilter -> SecurityContext: setAuthentication()
+JwtAuthFilter --> Application: continue request
+
+' ===== Controller Phase =====
+User -> BlogPostController: createPost(requestBody)
+BlogPostController -> BlogPostService: createPost(dto)
+BlogPostService -> UserRepository: findByUsername(authenticated user)
+UserRepository --> BlogPostService: User author
+
+BlogPostService -> BlogPostRepository: save(blogPost)
+BlogPostRepository --> BlogPostService: saved entity
+
+BlogPostService --> BlogPostController: BlogPostResponse
+BlogPostController --> User: 201 Created\nBlogPost data
+
+@enduml
