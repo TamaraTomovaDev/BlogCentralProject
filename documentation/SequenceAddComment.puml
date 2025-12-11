@@ -1,0 +1,37 @@
+@startuml
+actor User
+
+User -> Application: POST /blogposts/{id}/comments\nAuthorization: Bearer <token>
+
+' ===== JWT Filter =====
+Application -> JwtAuthFilter: validate token
+JwtAuthFilter -> JwtUtil: verify & extractUsername()
+JwtUtil --> JwtAuthFilter: username
+JwtAuthFilter -> CustomUserDetailsService: loadUserByUsername()
+CustomUserDetailsService -> UserRepository: findByUsername()
+UserRepository --> CustomUserDetailsService: User
+CustomUserDetailsService --> JwtAuthFilter: UserDetails
+JwtAuthFilter -> SecurityContext: authenticate user
+JwtAuthFilter --> Application: continue request
+
+' ===== Controller =====
+User -> CommentController: addComment(postId, body)
+CommentController -> CommentService: addComment(postId, dto)
+
+' ===== Check blogpost exists =====
+CommentService -> BlogPostRepository: findById(postId)
+BlogPostRepository --> CommentService: BlogPost OR empty
+CommentService -> CommentService: if not found → throw NotFoundException
+
+' ===== Get user =====
+CommentService -> UserRepository: findByUsername()
+UserRepository --> CommentService: User
+
+' ===== Save comment =====
+CommentService -> CommentRepository: save(comment)
+CommentRepository --> CommentService: saved comment
+
+CommentService --> CommentController: CommentResponse
+CommentController --> User: 201 Created\nComment data
+
+@enduml

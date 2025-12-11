@@ -1,0 +1,66 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+enum Role {
+  USER
+  ADMIN
+}
+
+class User {
+  + Long id
+  + String firstName
+  + String lastName
+  + String username
+  + String email
+  + String password
+  + String avatarUrl
+  + String street
+  + String houseNr
+  + String city
+  + String zip
+  + Role role
+  --
+  + List<BlogPost> blogPosts
+  + List<Comment> comments
+}
+
+class BlogPost {
+  + Long id
+  + String title
+  + String content
+  + LocalDateTime createdAt
+  + Integer likes
+  --
+  + User author
+  + List<Comment> comments
+}
+
+class Comment {
+  + Long id
+  + String content
+  + LocalDateTime createdAt
+  --
+  + User author
+  + BlogPost blogPost
+}
+
+' ========================
+' RELATIONSHIPS
+' ========================
+
+' User 1 --- * BlogPost
+User "1" --> "0...*" BlogPost : writes >
+
+' User 1 --- * Comment
+User "1" --> "0...*" Comment : writes >
+
+' BlogPost 1 --- * Comment
+BlogPost "1" --> "0...*" Comment : contains >
+
+' Comment * --- 1 User
+Comment "0...*" --> "1" User : authored by >
+
+' Comment * --- 1 BlogPost
+Comment "0...*" --> "1" BlogPost : belongs to >
+
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+actor User
+
+User -> AuthController: POST /users/login\n(username, password)
+AuthController -> AuthenticationManager: authenticate(credentials)
+AuthenticationManager -> CustomUserDetailsService: loadUserByUsername()
+CustomUserDetailsService -> UserRepository: findByUsername(username)
+UserRepository --> CustomUserDetailsService: User entity
+CustomUserDetailsService --> AuthenticationManager: UserDetails
+
+AuthenticationManager --> AuthController: authentication success
+
+AuthController -> JwtUtil: generateToken(username, role)
+JwtUtil --> AuthController: JWT token
+
+AuthController --> User: 200 OK\n{token: "..."}
+@enduml

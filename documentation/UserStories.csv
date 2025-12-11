@@ -1,0 +1,38 @@
+List Name,Title,Description,Labels
+User Management,US01 – Register,"As a visitor I want to create an account so that I can write, like and comment on posts.","backend,user"
+User Management,US02 – Login,"As a visitor I want to log in using username + password so that I can access protected features.","backend,auth"
+User Management,US03 – Receive JWT token,"As a logged-in user I want to receive a JWT token so that I can access secure endpoints.","backend,auth"
+User Management,US04 – Keep me logged in,"As a user I want a long-lived optional token so that I stay logged in longer.","backend,auth"
+User Management,US05 – View my profile,"As a logged-in user I want to view my profile so that I can verify my data.","backend,user"
+User Management,US06 – Edit profile,"As a logged-in user I want to edit my profile (except username) so that my data stays up to date.","backend,user"
+User Management,US07 – Delete profile,"As a logged-in user I want to delete my account so that my data is removed.","backend,user"
+
+Blogpost Management,US08 – Create blogpost,"As a logged-in user I want to create a blogpost so that I can publish content.","backend,blog"
+Blogpost Management,US09 – Edit blogpost,"As the author I want to edit my blogpost so that I can fix or update it.","backend,blog"
+Blogpost Management,US10 – Delete blogpost,"As the author I want to delete my blogpost so that I maintain control over my content.","backend,blog"
+Blogpost Management,US11 – View all blogposts,"As a visitor I want to browse blogposts with sorting and pagination so that I can find interesting content.","backend,blog"
+Blogpost Management,US12 – View blogpost details,"As a visitor I want to view the full details of a post so that I can read the content, author info, likes, and comments.","backend,blog"
+Blogpost Management,US13 – Like blogpost,"As a logged-in user I want to like a blogpost so that I can show appreciation.","backend,blog"
+
+Comment Management,US14 – Add comment,"As a logged-in user I want to comment on a blogpost so that I can share my opinion.","backend,comment"
+Comment Management,US15 – Edit comment,"As the comment author I want to edit my comment so that I can correct mistakes.","backend,comment"
+Comment Management,US16 – Delete comment,"As the comment author I want to delete my comment so that I keep control over my content.","backend,comment"
+Comment Management,US17 – Moderate comments,"As the author of a blogpost I want to delete any comment on my post so that I can remove inappropriate content.","backend,comment,moderation"
+
+Search & Statistics,US18 – Search,"As a visitor I want to search posts by title, user, or tag so that I can find relevant content.","backend,search"
+Search & Statistics,US19 – Online users statistic,"As an admin I want to see the number of online users so that I can monitor platform usage.","backend,stats"
+Search & Statistics,US20 – Visitor count statistic,"As an admin I want to see total number of visitors so that I understand platform popularity.","backend,stats"
+
+Security & Authorization,US21 – Enforce JWT authorization,"As the system I want protected endpoints to require a valid token so that user data stays secure.","backend,auth,security"
+Security & Authorization,US22 – Ownership checks,"As the system I want to ensure users can only edit their own posts or comments so data integrity is preserved.","backend,auth,security"
+Security & Authorization,US23 – Error handling,"As the system I want clean and correct error responses so that the API behaves professionally.","backend,api"
+
+Project Analysis & Documentation,US24 – Project analysis,"As a team we want to create a full project analysis so that the architecture is clear.","documentation,analysis"
+Project Analysis & Documentation,US25 – Class diagrams,"As a developer I want to create class diagrams so that the data model is well structured.","documentation,analysis"
+Project Analysis & Documentation,US26 – Sequence diagrams,"As a team we want sequence diagrams for login, CRUD, and comments so flows are visual.","documentation,analysis"
+Project Analysis & Documentation,US27 – Flowcharts,"As a team we want flowcharts for system processes so the logic is easy to understand.","documentation,analysis"
+
+Presentation,US28 – Prepare presentation,"As a team we want to create a 20–30 min presentation so that we can demonstrate our work.","presentation"
+Presentation,US29 – Prepare live demo,"As a team we want to prepare a live Postman demo so that we can show real API usage.","presentation"
+Presentation,US30 – Highlight key features,"As a team we want to explain why the product is valuable so the audience understands its strengths.","presentation"
+Presentation,US31 – Divide presentation tasks,"As a team we want each member to present a part so everyone contributes.","presentation"

@@ -1,0 +1,11 @@
+[User logged in?]
+         |
+      Yes / No → If No → 401 error
+         |
+   Check required fields?
+         |
+      Yes / No → If No → 400 Bad Request
+         |
+   Save BlogPost in DB
+         |
+       Return 201 Created
