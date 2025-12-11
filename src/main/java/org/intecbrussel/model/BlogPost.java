@@ -1,66 +1,29 @@
 package org.intecbrussel.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
+// PostBlog
 @Entity
-@Table(name = "blog_posts")
-public class BlogPost {
+public class BlogPost { // eigenaar
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                 // PK
+    @GeneratedValue
+    private Long id;
 
-    @Column(nullable = false)
-    private String title;            // STORY11 + 12
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;          // STORY08 + 09 + 12
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt; // datum/tijd
-
-    @Column(nullable = false)
-    private int likes = 0;           // aantal likes (STORY13)
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    @JsonIgnoreProperties({"blogPosts", "comments"})
-    private User author;             // relatie naar User
-
-    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("blogPost")
-    private List<Comment> comments = new ArrayList<>(); // list of comments
+    private String title;
+    private String content;
+    private Date createdAt;
+    private int likes;
+    @ManyToOne
+    @JoinColumn(name= "user_id")
+    private User author;
+    @OneToMany(mappedBy = "id")
+    private List<Comment> comments;
 
     public BlogPost() {
     }
-
-    public BlogPost(String title, String content, User author) {
-        this.title = title;
-        this.content = content;
-        this.author = author;
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-    }
-
-    //getters & setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public BlogPost(String title, String content) {}
 
     public String getTitle() {
         return title;
@@ -78,11 +41,11 @@ public class BlogPost {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -108,5 +71,18 @@ public class BlogPost {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    @Override
+    public String toString() {
+        return "BlogPost{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", createdAt=" + createdAt +
+                ", likes=" + likes +
+                ", author=" + author +
+                ", comments=" + comments +
+                '}';
     }
 }
