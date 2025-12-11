@@ -35,5 +35,4 @@ public class APIError {
     public void setPath(String path) {        this.path = path;    }
     public List<String> getValidationErrors() {        return validationErrors;    }
     public void setValidationErrors(List<String> validationErrors) {        this.validationErrors = validationErrors;    }
-
 }
