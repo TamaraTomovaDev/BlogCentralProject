@@ -1,4 +1,4 @@
-package org.intecbrussel.service.impl;
+package org.intecbrussel.service;
 
 import org.intecbrussel.dto.UserRegisterRequest;
 import org.intecbrussel.dto.UserResponse;

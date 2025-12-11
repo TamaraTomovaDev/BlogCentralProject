@@ -1,10 +1,9 @@
 package org.intecbrussel.repository;
 
-
-import org.intecbrussel.model.Comment;
+import org.intecbrussel.model.BlogPost;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment,Long> {
+public interface BlogPostRepository extends JpaRepository<BlogPost, Long> {
 }

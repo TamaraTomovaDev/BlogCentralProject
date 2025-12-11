@@ -1,9 +1,9 @@
 package org.intecbrussel.model;
 
 import jakarta.persistence.*;
-import org.apache.catalina.User;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -16,10 +16,10 @@ public class Comment {
 
     private String content;
     @CreatedDate
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
     @JoinColumn(name="blogpost_id")
@@ -28,7 +28,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String content, Date createdAt, User user, BlogPost blogPost) {
+    public Comment(String content, LocalDateTime createdAt, User user, BlogPost blogPost) {
         this.content = content;
         this.createdAt = createdAt;
         this.user = user;
@@ -51,11 +51,11 @@ public class Comment {
         this.content = content;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

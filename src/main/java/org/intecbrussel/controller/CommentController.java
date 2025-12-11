@@ -23,17 +23,19 @@ public class CommentController {
         return commentService.getCommentById(id);
     }
 
-    @PostMapping
-    public Comment save(@RequestBody Comment comment){
-        return commentService.addComment(comment);
+    @PostMapping("/{id}")
+    public Comment save(@PathVariable Long id,@RequestBody String content){
+        return commentService.addComment(id,content);
     }
 
-    @PutMapping
-    public Comment update(@RequestBody Comment comment){
-        return commentService.updateComment(comment);
+    @PutMapping("/{id}")
+    public Comment update(@PathVariable Long id,@RequestBody String content){
+        return commentService.updateComment(id,content);
     }
 
-    @DeleteMapping
-    public void deleteById(@RequestBody Comment comment){
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable Long id){
+        commentService.deleteCommentById(id);
     }
+
 }
