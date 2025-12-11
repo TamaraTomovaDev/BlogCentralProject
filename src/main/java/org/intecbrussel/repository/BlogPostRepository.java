@@ -1,6 +1,6 @@
 package org.intecbrussel.repository;
 
-import com.example.blogcentral.model.BlogPost;
+import org.intecbrussel.model.BlogPost;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
