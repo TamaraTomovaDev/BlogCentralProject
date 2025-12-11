@@ -1,29 +1,66 @@
 package org.intecbrussel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class BlogPost { // eigenaar
+@Table(name = "blog_posts")
+public class BlogPost {
     @Id
-    @GeneratedValue
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;                 // PK
 
-    private String title;
-    private String content;
-    private Date createdAt;
-    private int likes;
-    @ManyToOne
-    @JoinColumn(name= "user_id")
-    private User author;
-    @OneToMany(mappedBy = "id")
-    private List<Comment> comments;
+    @Column(nullable = false)
+    private String title;            // STORY11 + 12
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;          // STORY08 + 09 + 12
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt; // datum/tijd
+
+    @Column(nullable = false)
+    private int likes = 0;           // aantal likes (STORY13)
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    @JsonIgnoreProperties({"blogPosts", "comments"})
+    private User author;             // relatie naar User
+
+    @OneToMany(mappedBy = "blogPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("blogPost")
+    private List<Comment> comments = new ArrayList<>(); // list of comments
 
     public BlogPost() {
     }
-    public BlogPost(String title, String content) {}
+
+    public BlogPost(String title, String content, User author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
+    //getters & setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -41,11 +78,11 @@ public class BlogPost { // eigenaar
         this.content = content;
     }
 
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -71,18 +108,5 @@ public class BlogPost { // eigenaar
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
-    }
-
-    @Override
-    public String toString() {
-        return "BlogPost{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", createdAt=" + createdAt +
-                ", likes=" + likes +
-                ", author=" + author +
-                ", comments=" + comments +
-                '}';
     }
 }
