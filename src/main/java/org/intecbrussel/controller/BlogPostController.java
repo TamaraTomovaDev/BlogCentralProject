@@ -78,7 +78,7 @@ public class BlogPostController {
     }
 
     private User getCurrentUser() {
-        // TODO: адаптируй под твой UserDetails
+        // TODO: UserDetails
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails custom = (CustomUserDetails) auth.getPrincipal();
         return custom.getUser();
