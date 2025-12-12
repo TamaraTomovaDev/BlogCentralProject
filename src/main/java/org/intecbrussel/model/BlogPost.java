@@ -25,6 +25,7 @@ public class BlogPost { // eigenaar
     }
     public BlogPost(String title, String content) {}
 
+
     public String getTitle() {
         return title;
     }

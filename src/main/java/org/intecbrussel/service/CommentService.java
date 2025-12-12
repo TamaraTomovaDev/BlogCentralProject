@@ -1,5 +1,9 @@
 package org.intecbrussel.service;
 
+import org.intecbrussel.dto.CommentCreateRequest;
+import org.intecbrussel.dto.CommentResponse;
+import org.intecbrussel.dto.CommentUpdateRequest;
+import org.intecbrussel.mapper.CommentMapper;
 import org.intecbrussel.model.BlogPost;
 import org.intecbrussel.model.Comment;
 import org.intecbrussel.model.User;
@@ -31,68 +35,81 @@ public class CommentService {
     @Autowired
     private AuthService authService;
 
-
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public CommentService(CommentRepository commentRepository, BlogPostRepository blogPostRepository, UserRepository userRepository, AuthService authService) {
+        this.commentRepository = commentRepository;
+        this.blogPostRepository = blogPostRepository;
+        this.userRepository = userRepository;
+        this.authService = authService;
     }
 
-    public Comment getCommentById(Long id) {
-        return commentRepository.findById(id).orElse(null);
+    public List<CommentResponse> getAllComments() {
+        return commentRepository.findAll()
+                .stream()
+                .map(CommentMapper::toResponse)
+                .toList();
     }
 
-    public Comment addComment(Long blogPostId,String content) {
-        // Haal ingelogde gebruiker op met "SecurityContextHolder"
-        Authentication auth =  SecurityContextHolder.getContext().getAuthentication();
-        if(auth==null || !auth.isAuthenticated()|| auth instanceof AnonymousAuthenticationToken) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"User not logged in");
-        }
-        // Haal user uit database
-        String username = auth.getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Username not found"));
+    public CommentResponse getCommentById(Long id) {
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
-        // Haal BlogPost uit
-        BlogPost blogPost = blogPostRepository.findById(blogPostId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"Post not found"));
+        return CommentMapper.toResponse(comment);
+    }
 
-        // Comment maken
+    public CommentResponse createComment(CommentCreateRequest request) {
+
+        User user = authService.getAuthenticatedUser();
+
+        BlogPost blogPost = blogPostRepository.findById(request.getBlogPostId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "BlogPost not found"));
+
         Comment comment = new Comment();
-        comment.setUser(user);
-        comment.setContent(content);
-        comment.setBlogPost(blogPost);
+        comment.setContent(request.getContent());
         comment.setCreatedAt(LocalDateTime.now());
-        // na alles opslaan
-        return commentRepository.save(comment);
+        comment.setUser(user);
+        comment.setBlogPost(blogPost);
+
+        Comment saved = commentRepository.save(comment);
+
+        return CommentMapper.toResponse(saved);
+
     }
 
-    public Comment updateComment(Long commentId,String newContent) {
+    public CommentResponse updateComment(Long id, CommentUpdateRequest request) {
 
-        User user = authService.getAuthenticatedUser(); // haal ingelogde user
+        User user = authService.getAuthenticatedUser();
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Comment not found"));
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
 
-        if(!comment.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You cannot edit someone else's comment");
+        if (!comment.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot edit someone else's comment");
         }
-        comment.setContent(newContent);
-        return commentRepository.save(comment);
+
+        comment.setContent(request.getContent());
+
+        Comment updated = commentRepository.save(comment);
+
+        return CommentMapper.toResponse(updated);
     }
 
-    public void deleteCommentById(Long id) {
+    public void deleteComment(Long id) {
 
-        User user = authService.getAuthenticatedUser(); // Haal ingeloggede user
+        User user = authService.getAuthenticatedUser();
 
-        Comment comment = commentRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND,"Comment not found"));
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found"));
+
         User commentAuthor = comment.getUser();
-        User postAuthor = comment.getBlogPost().getAuthor(); // auteur v/d blogpost
+        User postAuthor = comment.getBlogPost().getAuthor();
 
-        boolean isCommentOwner = commentAuthor.getId().equals(postAuthor.getId());
+        boolean isCommentOwner = commentAuthor.getId().equals(user.getId());
         boolean isPostOwner = postAuthor.getId().equals(user.getId());
 
-        if(!isCommentOwner && !isPostOwner) { // alleen de auteur van comment of blogpost mag verwijderen
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,"You cannot delete someone else's comment");
+        if (!isCommentOwner && !isPostOwner) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete someone else's comment");
         }
+
         commentRepository.delete(comment);
     }
 

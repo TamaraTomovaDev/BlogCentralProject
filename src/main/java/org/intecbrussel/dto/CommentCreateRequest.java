@@ -7,8 +7,6 @@ public class CommentCreateRequest {
     @NotBlank
     private String content;
 
-    @NotNull
-    private Long userId;
 
     @NotNull
     private Long blogPostId;
@@ -21,13 +19,6 @@ public class CommentCreateRequest {
         this.content = content;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public Long getBlogPostId() {
         return blogPostId;
