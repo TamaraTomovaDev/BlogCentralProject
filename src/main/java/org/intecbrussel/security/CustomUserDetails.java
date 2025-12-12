@@ -1,6 +1,7 @@
 package org.intecbrussel.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.intecbrussel.model.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +22,9 @@ public class CustomUserDetails implements UserDetails {
     // empty list of authorities
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_USER" + user.getRole().name())
+        );
     }
 
     @Override
@@ -41,5 +44,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled()             { return true; }
+    public boolean isEnabled() { return true; }
 }

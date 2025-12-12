@@ -13,20 +13,34 @@ public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String SECRET;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration:3600000}") //fallback of 1 hour
     private long EXPIRATION;
+
+    @Value("${jwt.expirationRememberMe:604800000}")  // fallback of 7 days
+    private long EXPIRATION_REMEMBER_ME;
 
     // secret is converted into crypted key
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
 
-    // generate JWT token with username in subject
-    public String generateToken(String username) {
+    // generate JWT token with username and role in subject
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRememberMeToken(String username, String role) {
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_REMEMBER_ME))  // Uses EXPIRATION_REMEMBER_ME value from properties
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -36,7 +50,12 @@ public class JwtTokenUtil {
         return parseClaims(token).getBody().getSubject();
     }
 
-    // validate token (correct, signed and not expired)
+    // extract role from JWT token
+    public String extractRole(String token) {
+        return parseClaims(token).getBody().get("role").toString();
+    }
+
+    // validate token (correct, signed, correct role and not expired)
     public boolean isTokenValid(String token) {
         try {
             parseClaims(token);
@@ -45,13 +64,19 @@ public class JwtTokenUtil {
             return false;
         }
     }
+
     // parse and validate tokens
     private Jws<Claims> parseClaims(String token) {
-        return Jwts.builder()
-                .setSigningKey(getSigningKey())   // This works now
+        return Jwts.parser()
+                .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token);
+    }
+
+    // verify the role
+    public boolean hasRole(String token, String role) {
+        String userRole = extractRole(token);
+        return userRole != null && userRole.equals(role);
     }
 }
 

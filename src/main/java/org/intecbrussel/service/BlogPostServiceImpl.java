@@ -2,6 +2,7 @@ package org.intecbrussel.service;
 
 import org.intecbrussel.dto.*;
 import org.intecbrussel.exception.*;
+import org.intecbrussel.mapper.DateMapper;
 import org.intecbrussel.model.BlogPost;
 import org.intecbrussel.repository.BlogPostRepository;
 import org.springframework.data.domain.*;
@@ -98,7 +99,7 @@ public class BlogPostServiceImpl implements BlogPostService {
         dto.setId(post.getId());
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
-        dto.setCreatedAt(post.getCreatedAt());
+        dto.setCreatedAt(DateMapper.toLocalDateTime(post.getCreatedAt()));
         dto.setLikes(post.getLikes());
 
         if (post.getAuthor() != null) {
@@ -115,8 +116,8 @@ public class BlogPostServiceImpl implements BlogPostService {
                                 c.setId(comment.getId());
                                 c.setContent(comment.getContent());
                                 c.setCreatedAt(comment.getCreatedAt());
-                                c.setAuthorId(comment.getAuthor().getId());
-                                c.setAuthorUsername(comment.getAuthor().getUsername());
+                                c.setAuthorId(comment.getUser().getId());
+                                c.setAuthorUsername(comment.getUser().getUsername());
                                 return c;
                             })
                             .toList()
@@ -125,5 +126,4 @@ public class BlogPostServiceImpl implements BlogPostService {
 
         return dto;
     }
-    }
-
+}
